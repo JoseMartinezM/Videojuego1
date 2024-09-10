@@ -113,20 +113,9 @@ def move():
     goto(pacman.x + 10, pacman.y + 10)
     dot(20, 'yellow')
 
-    for point, course in ghosts:
-        if valid(point + course):
-            point.move(course)
-        else:
-            options = [
-                vector(5, 0),
-                vector(-5, 0),
-                vector(0, 5),
-                vector(0, -5),
-            ]
-            plan = choice(options)
-            course.x = plan.x
-            course.y = plan.y
+    move_ghosts()
 
+    for point, course in ghosts:
         up()
         goto(point.x + 10, point.y + 10)
         dot(20, 'red')
@@ -138,6 +127,23 @@ def move():
             return
 
     ontimer(move, 50)
+
+
+def move_ghosts():
+    """Move ghosts and make them smarter."""
+    for point, course in ghosts:
+        if valid(point + course):
+            point.move(course)
+        else:
+            # Make ghosts smarter by choosing a direction that moves them closer to Pacman
+            directions = [
+                vector(5, 0), vector(-5, 0),
+                vector(0, 5), vector(0, -5)
+            ]
+            best_direction = min(directions, key=lambda d: abs(pacman - (point + d)))
+            course.x = best_direction.x
+            course.y = best_direction.y
+
 
 def change(x, y):
     "Change pacman aim if valid."
