@@ -18,40 +18,39 @@ def change(x, y):
 def inside(head):
     "Return True if head inside boundaries."
     return -200 < head.x < 190 and -200 < head.y < 190
-    
+
+def inside_window(point):
+    """Check if a point is inside the window boundaries."""
+    return -200 < point.x < 190 and -200 < point.y < 190
+
 def move_food():
     """Move food randomly one step at a time."""
     direction = randint(0, 3)
     directions = [vector(0, 100), vector(0, -100), vector(-100, 0), vector(100, 0)]
-    if inside_window(food + directions[direction]):
+    new_food = food + directions[direction]
+    if inside_window(new_food):
         food.move(directions[direction])
-        
+
 def move():
     """Move snake forward one segment."""
     head = snake[-1].copy()
     head.move(aim)
-    # Mueve a la direccione en la que se encuentra
 
-    # Limites y colisiones
+    # Check for collision with boundaries or self
     if not inside(head) or head in snake:
         square(head.x, head.y, 9, 'red')
         update()
         return
 
     snake.append(head)
-   
 
-    
     if head == food:
         print('Snake:', len(snake))
-        #food.x = randrange(-15, 15) * 10
-        #food.y = randrange(-15, 15) * 10
         move_food()  # Move food randomly after being eaten
     else:
         snake.pop(0)
-        # Se elimina la cola de la serpiente
 
-    clear() 
+    clear()
 
 
     for body in snake:
