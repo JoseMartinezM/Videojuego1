@@ -50,8 +50,12 @@ def move():
     targets.clear()
 
     for target in dupe:
-        if abs(target - ball) > 13:
-            targets.append(target)
+    	if not inside(target):
+        	# Reposiciona la diana en el borde derecho con una nueva posición en Y
+        	target.x = 200
+        	target.y = randrange(-150, 150)
+    	targets.append(target)
+
 
     draw()
 
