@@ -36,7 +36,7 @@ def square(start, end):
     end_fill()
 
 
-def circle(start, end):     #Añadi la funcion para dibujar el circulo
+def circle(start, end):     
     """Draw circle from start to end."""
     up()
     goto(start.x, start.y)
@@ -44,7 +44,7 @@ def circle(start, end):     #Añadi la funcion para dibujar el circulo
     begin_fill()
 
     radius = ((end.x - start.x) ** 2 + (end.y - start.y) ** 2) ** 0.5  # Calcula el radio
-    circle(radius)  # Dibuja el círculo con el radio calculado
+    circle(radius)  # Usa la función de turtle para dibujar el círculo
 
     end_fill()
 
@@ -65,9 +65,6 @@ def rectangle(start, end):
     end_fill()
 
 
-    pass  # TODO
-
-
 def triangle(start, end):
     """Draw triangle from start to end."""
     up()
@@ -83,8 +80,6 @@ def triangle(start, end):
     forward(end.x - start.x)
 
     end_fill()
-
-    pass  # TODO
 
 
 def tap(x, y):
@@ -118,7 +113,7 @@ onkey(lambda: color('red'), 'R')
 onkey(lambda: color('purple'), 'P')  # Nuevo color
 onkey(lambda: store('shape', line), 'l')
 onkey(lambda: store('shape', square), 's')
-onkey(lambda: store('shape', draw_circle), 'c')
+onkey(lambda: store('shape', circle), 'c')  # Usa circle en lugar de draw_circle
 onkey(lambda: store('shape', rectangle), 'r')
 onkey(lambda: store('shape', triangle), 't')
 done()
