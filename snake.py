@@ -1,5 +1,5 @@
 from turtle import *
-from random import randrange
+from random import randint
 from freegames import square, vector
 import random
 
