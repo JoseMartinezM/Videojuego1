@@ -6,7 +6,9 @@ import random
 food = vector(0, 0)
 snake = [vector(10, 0)]
 aim = vector(0, -10)
-colors = ["black", "green", "yellow", "purple", "blue"]
+color = ["black", "green", "yellow", "purple", "blue"]
+randomCuerpo = random.randint(0, 4)
+randomComida = random.randint(0, 4)
 
 def change(x, y):
     "Change snake direction."
@@ -43,22 +45,35 @@ def move():
     if head == food:
         print('Snake:', len(snake))
         move_food()  # Mueve la comida a una nueva posición
-        randomComida = random.randint(0, 4)  # Cambia el color de la comida
     else:
         snake.pop(0)
 
     clear()
 
-    # Elige un color aleatorio para cada segmento del cuerpo de la serpiente
     for body in snake:
-        randomCuerpo = random.randint(0, 4)  # Cambia el color del cuerpo en cada iteración
-        square(body.x, body.y, 9, colors[randomCuerpo])
+        square(body.x, body.y, 9, 'black')
 
-    # Dibuja la comida con un color aleatorio
-    square(food.x, food.y, 9, colors[randomComida])
+    square(food.x, food.y, 9, 'green')
     update()
+    ontimer(move, 100)
 
-    # Llama a move() de nuevo después de 100ms
+
+    snake.append(head)
+
+    if head == food:
+        print('Snake:', len(snake))
+        food.x = randrange(-15, 15) * 10
+        food.y = randrange(-15, 15) * 10
+    else:
+        snake.pop(0)
+
+    clear()
+
+    for body in snake:
+        square(body.x, body.y, 9, color[randomCuerpo])
+
+    square(food.x, food.y, 9, color[randomComida])
+    update()
     ontimer(move, 100)
 
 setup(420, 420, 370, 0)
