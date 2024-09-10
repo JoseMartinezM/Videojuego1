@@ -18,56 +18,41 @@ def change(x, y):
 def inside(head):
     "Return True if head inside boundaries."
     return -200 < head.x < 190 and -200 < head.y < 190
-
+    
 def move_food():
-    """Move food to a random position within boundaries."""
-    while True:
-        new_x = randrange(-19, 19) * 10
-        new_y = randrange(-19, 19) * 10
-        new_food = vector(new_x, new_y)
-        if new_food not in snake:
-            food.x = new_food.x
-            food.y = new_food.y
-            break
-
+    """Move food randomly one step at a time."""
+    direction = randint(0, 3)
+    directions = [vector(0, 100), vector(0, -100), vector(-100, 0), vector(100, 0)]
+    if inside_window(food + directions[direction]):
+        food.move(directions[direction])
+        
 def move():
     """Move snake forward one segment."""
     head = snake[-1].copy()
     head.move(aim)
+    # Mueve a la direccione en la que se encuentra
 
+    # Limites y colisiones
     if not inside(head) or head in snake:
         square(head.x, head.y, 9, 'red')
         update()
         return
 
     snake.append(head)
+   
 
+    
     if head == food:
         print('Snake:', len(snake))
-        move_food()  # Mueve la comida a una nueva posición
+        #food.x = randrange(-15, 15) * 10
+        #food.y = randrange(-15, 15) * 10
+        move_food()  # Move food randomly after being eaten
     else:
         snake.pop(0)
+        # Se elimina la cola de la serpiente
 
-    clear()
+    clear() 
 
-    for body in snake:
-        square(body.x, body.y, 9, 'black')
-
-    square(food.x, food.y, 9, 'green')
-    update()
-    ontimer(move, 100)
-
-
-    snake.append(head)
-
-    if head == food:
-        print('Snake:', len(snake))
-        food.x = randrange(-15, 15) * 10
-        food.y = randrange(-15, 15) * 10
-    else:
-        snake.pop(0)
-
-    clear()
 
     for body in snake:
         square(body.x, body.y, 9, color[randomCuerpo])
