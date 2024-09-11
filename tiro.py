@@ -7,7 +7,7 @@ speed = vector(0, 0)
 targets = []
 
 def tap(x, y):
-    "Respond to screen tap."
+    "Responde al clic en la pantalla, reposiciona la bola y ajusta su velocidad."
     if not inside(ball):
         ball.x = -199
         ball.y = -199
@@ -15,11 +15,11 @@ def tap(x, y):
         speed.y = (y + 200) / 20
 
 def inside(xy):
-    "Return True if xy is within screen."
+    "Devuelve True si las coordenadas están dentro de la pantalla."
     return -200 < xy.x < 200 and -200 < xy.y < 200
 
 def draw():
-    "Draw ball and targets."
+    "Dibuja la bola y los objetivos en la pantalla."
     clear()
 
     for target in targets:
@@ -33,7 +33,7 @@ def draw():
     update()
 
 def move():
-    "Move ball and targets."
+    "Mueve la bola y los objetivos en la pantalla."
     global target_speed  
 
     if randrange(40) == 0:
@@ -60,11 +60,11 @@ def move():
 
     draw()
 
-    target_speed += 0.01 
+    target_speed += 0.01  # Aumenta gradualmente la velocidad de los objetivos
 
     ontimer(move, 50)
 
-target_speed = 0.5  
+target_speed = 0.5  # Velocidad inicial de los objetivos
 
 setup(420, 420, 370, 0)
 hideturtle()
@@ -73,4 +73,3 @@ tracer(False)
 onscreenclick(tap)
 move()
 done()
-
