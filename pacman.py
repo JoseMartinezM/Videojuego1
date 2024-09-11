@@ -1,4 +1,4 @@
-from random import choice, shuffle
+from random import sample
 from turtle import *
 from freegames import floor, vector
 
@@ -14,6 +14,7 @@ ghosts = [
     [vector(100, -160), vector(-5, 0)],
 ]
 
+# Original map layout
 original_tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
@@ -43,7 +44,7 @@ def generate_map():
     indices = [i for i, tile in enumerate(tiles) if tile == 0]
     num_zeros = len(indices)
     num_changes = min(max(num_zeros // 10, 1), 10)
-    indices_to_change = choice(indices, num_changes, replace=False)
+    indices_to_change = sample(indices, num_changes)
     for i in indices_to_change:
         tiles[i] = 1 if tiles[i] == 0 else 0
 
