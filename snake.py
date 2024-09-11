@@ -2,6 +2,7 @@ from turtle import *
 from random import randint
 from freegames import square, vector
 import random
+import time
 
 food = vector(0, 0)
 snake = [vector(10, 0)]
@@ -12,7 +13,7 @@ food_speed = 2
 randomCuerpo = random.randint(0, 4)
 randomComida = random.randint(0, 4)
 food_direction = vector(food_speed, 0)  
-food_change_time = 0  
+food_change_time = time.time()  
 
 def change(x, y):
     "Change snake direction."
@@ -58,7 +59,7 @@ def move():
 
     else:
         snake.pop(0)
-    current_time = int(ontimer(move, 0) / 1000)  
+    current_time = time.time()
     if current_time - food_change_time > 1:  
         food_direction = random_direction()
         food_change_time = current_time
