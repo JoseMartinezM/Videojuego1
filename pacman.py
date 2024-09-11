@@ -1,5 +1,6 @@
-from random import choice, randint
+from random import choice
 from turtle import *
+
 from freegames import floor, vector
 
 state = {'score': 0}
@@ -12,31 +13,47 @@ ghosts = [
     [vector(-180, -160), vector(0, 5)],
     [vector(100, 160), vector(0, -5)],
     [vector(100, -160), vector(-5, 0)],
+
 ]
 
-# Tiles originales proporcionados
-tiles = [
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0,
-    0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-]
+import random
+from freegames import floor, vector
+
+def offset(point):
+    """Return offset of point in tiles."""
+    x = (floor(point.x, 20) + 200) / 20
+    y = (180 - floor(point.y, 20)) / 20
+    index = int(x + y * 20)
+    return index
+
+def generate_dynamic_map():
+    tiles = [0] * 400
+
+    for i in range(20):
+        tiles[i] = 0  # Top border
+        tiles[i + 380] = 0  # Bottom border
+        tiles[i * 20] = 0  # Left border
+        tiles[i * 20 + 19] = 0  # Right border
+
+    for i in range(1, 19):
+        for j in range(1, 19):
+            if random.random() > 0.3:
+                tiles[i * 20 + j] = 1
+            else:
+                tiles[i * 20 + j] = 0
+
+    # Ensure Pacman's starting position is a path
+    pacman_index = offset(pacman)
+    tiles[pacman_index] = 1
+
+    # Ensure ghost starting positions are paths
+    for ghost in ghosts:
+        ghost_index = offset(ghost[0])
+        tiles[ghost_index] = 1
+
+    return tiles
+
+tiles = generate_dynamic_map()
 
 def square(x, y):
     """Draw square using path at (x, y)."""
@@ -51,12 +68,8 @@ def square(x, y):
 
     path.end_fill()
 
-def offset(point):
-    """Return offset of point in tiles."""
-    x = (floor(point.x, 20) + 200) / 20
-    y = (180 - floor(point.y, 20)) / 20
-    index = int(x + y * 20)
-    return index
+
+
 
 def valid(point):
     """Return True if point is valid in tiles."""
@@ -71,6 +84,7 @@ def valid(point):
         return False
 
     return point.x % 20 == 0 or point.y % 20 == 0
+
 
 def world():
     """Draw world using path."""
@@ -89,6 +103,7 @@ def world():
                 path.up()
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
+
 
 def move():
     """Move pacman and all ghosts."""
@@ -113,23 +128,55 @@ def move():
     goto(pacman.x + 10, pacman.y + 10)
     dot(20, 'yellow')
 
-    for point, course in ghosts:
-        # Fantasmas persiguen a Pacman
-        direction = vector(pacman.x - point.x, pacman.y - point.y)
-        direction = direction.norm()  # Normaliza la dirección
-        course.x = direction.x * 3  # Ajusta la velocidad
-        course.y = direction.y * 3  # Ajusta la velocidad
-
+    for idx, (point, course) in enumerate(ghosts):
         if valid(point + course):
             point.move(course)
         else:
+            # determina la velocidad de los fantasmas
             options = [
-                vector(5, 0),
-                vector(-5, 0),
-                vector(0, 5),
-                vector(0, -5),
+                vector(10, 0),
+                vector(-10, 0),
+                vector(0, 10),
+                vector(0, -10),
             ]
-            plan = choice(options)
+            
+            # Calcula la distancia entre pacman y el fantasma
+            xDistance = pacman.x - point.x
+            yDistance = pacman.y - point.y
+
+            # Asigna la dirección dependiendo de la distancia (izquierda o derecha, arriba o abajo)
+            xDirection = options[1] if xDistance < 0 else options[0]
+            yDirection = options[3] if yDistance < 0 else options[2]
+
+            # Determina si la dirección es horizontal o vertical dependiendo de cual
+            # distancia es mayor
+            horizontal = True if abs(xDistance) > abs(yDistance) else False
+
+            # Intenta moverse en la direccion ideal hacia pacman,
+            # pero siempre es posible que esto sea un movimiento invalido,
+            # por lo que se tienen que checar los movimientos alternativos
+            # que si sean validos. Se revisan en orden de que tan buenos
+            # son los movimientos, para que asi el fantasma siempre se 
+            # acerque a pacman
+            if horizontal:
+                if valid(point + xDirection):
+                    plan = xDirection
+                elif valid(point + yDirection):
+                    plan = yDirection
+                elif valid(point - xDirection):
+                    plan = -xDirection
+                else:
+                    plan = -yDirection
+            else:
+                if valid(point + yDirection):
+                    plan = yDirection
+                elif valid(point + xDirection):
+                    plan = xDirection
+                elif valid(point - xDirection):
+                    plan = -xDirection
+                else:
+                    plan = -yDirection
+
             course.x = plan.x
             course.y = plan.y
 
@@ -141,36 +188,17 @@ def move():
 
     for point, course in ghosts:
         if abs(pacman - point) < 20:
-            # Reiniciar juego al perder
-            global tiles
-            tiles = [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-                0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-                0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
-                0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-                0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-                0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-                0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            ]
-            pacman.x, pacman.y = -40, -80
-            aim.x, aim.y = 5, 0
-            state['score'] = 0
             return
 
     ontimer(move, 100)
+
 
 def change(x, y):
     """Change pacman aim if valid."""
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
+
 
 setup(420, 420, 370, 0)
 hideturtle()
