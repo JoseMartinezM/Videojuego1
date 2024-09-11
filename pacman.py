@@ -47,8 +47,8 @@ def square(x, y):
 
 def offset(point):
     "Return offset of point in tiles."
-    x = (floor(point.x, 20) + 200) / 20
-    y = (180 - floor(point.y, 20)) / 20
+    x = (floor(point.x, 20) + 200) // 20
+    y = (180 - floor(point.y, 20)) // 20
     index = int(x + y * 20)
     return index
 
@@ -56,10 +56,16 @@ def valid(point):
     "Return True if point is valid in tiles."
     index = offset(point)
 
+    if index < 0 or index >= len(tiles):
+        return False
+
     if tiles[index] == 0:
         return False
 
     index = offset(point + 19)
+
+    if index < 0 or index >= len(tiles):
+        return False
 
     if tiles[index] == 0:
         return False
@@ -176,7 +182,6 @@ def start_game():
     onkey(lambda: aim.set(0, 5), 'Up')
     onkey(lambda: aim.set(0, -5), 'Down')
     move()
-    done()
+    mainloop()
 
-if __name__ == '__main__':
-    start_game()
+start_game()
