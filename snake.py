@@ -7,6 +7,7 @@ food = vector(0, 0)
 snake = [vector(10, 0)]
 aim = vector(0, -10)
 color = ["black", "green", "yellow", "purple", "blue"]
+speed = 100  
 randomCuerpo = random.randint(0, 4)
 randomComida = random.randint(0, 4)
 
@@ -26,17 +27,17 @@ def inside_window(point):
 def move_food():
     """Move food randomly one step at a time."""
     direction = randint(0, 3)
-    directions = [vector(0, 100), vector(0, -100), vector(-100, 0), vector(100, 0)]
+    directions = [vector(0, 20), vector(0, -20), vector(-20, 0), vector(20, 0)] 
     new_food = food + directions[direction]
     if inside_window(new_food):
         food.move(directions[direction])
 
 def move():
     """Move snake forward one segment."""
+    global speed
     head = snake[-1].copy()
     head.move(aim)
 
-    # Check for collision with boundaries or self
     if not inside(head) or head in snake:
         square(head.x, head.y, 9, 'red')
         update()
@@ -45,20 +46,20 @@ def move():
     snake.append(head)
 
     if head == food:
-        print('Snake:', len(snake))
-        move_food()  # Move food randomly after being eaten
+        print('Snake length:', len(snake))
+        move_food()  
+        speed = max(50, speed - 3)  
     else:
         snake.pop(0)
 
     clear()
-
 
     for body in snake:
         square(body.x, body.y, 9, color[randomCuerpo])
 
     square(food.x, food.y, 9, color[randomComida])
     update()
-    ontimer(move, 100)
+    ontimer(move, speed)  
 
 setup(420, 420, 370, 0)
 hideturtle()
