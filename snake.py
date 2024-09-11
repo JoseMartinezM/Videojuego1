@@ -13,6 +13,13 @@ food_speed = 2
 food_direction = vector(food_speed, 0)  
 food_change_time = time.time()  
 
+def initialize_colors():
+    global snake_color, food_color
+    available_colors = color[:]
+    snake_color = random.choice(available_colors)
+    available_colors.remove(snake_color)
+    food_color = random.choice(available_colors)
+
 def change(x, y):
     "Change snake direction."
     aim.x = x
@@ -69,13 +76,10 @@ def move():
 
     clear()
     
-    randomCuerpo = random.randint(0, len(color) - 1)
-    randomComida = random.randint(0, len(color) - 2)  
-    
     for body in snake:
-        square(body.x, body.y, 9, color[randomCuerpo])
+        square(body.x, body.y, 9, snake_color)
 
-    square(food.x, food.y, 9, color[randomComida])
+    square(food.x, food.y, 9, food_color)
     update()
     ontimer(move, speed)  
 
@@ -87,5 +91,6 @@ onkey(lambda: change(10, 0), 'Right')
 onkey(lambda: change(-10, 0), 'Left')
 onkey(lambda: change(0, 10), 'Up')
 onkey(lambda: change(0, -10), 'Down')
+initialize_colors()  
 move()
 done()
