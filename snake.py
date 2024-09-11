@@ -7,7 +7,7 @@ import time
 food = vector(0, 0)
 snake = [vector(10, 0)]
 aim = vector(0, -10)
-color = ["black", "green", "yellow", "purple", "blue"]
+color = ["black", "green", "yellow", "purple", "blue", "orange", "pink", "cyan", "brown", "magenta"]
 speed = 100  
 food_speed = 2  
 randomCuerpo = random.randint(0, 4)
