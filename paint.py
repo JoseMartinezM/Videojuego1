@@ -14,14 +14,14 @@ from freegames import vector
 from math import sqrt
 
 def line(start, end):
-    """Draw line from start to end."""
+    "Dibuja una línea desde el punto de inicio hasta el punto final."
     up()
     goto(start.x, start.y)
     down()
     goto(end.x, end.y)
 
-def square(start, end):  # Función para dibujar un cuadrado con 's'
-    """Draw square from start to end."""
+def square(start, end):
+    "Dibuja un cuadrado desde el punto de inicio hasta el punto final."
     up()
     goto(start.x, start.y)
     down()
@@ -33,8 +33,8 @@ def square(start, end):  # Función para dibujar un cuadrado con 's'
 
     end_fill()
 
-def draw_circle(start, end):  # Función para dibujar un círculo con 'c'
-    """Draw circle from start to end."""
+def draw_circle(start, end):
+    "Dibuja un círculo utilizando el punto de inicio como centro y la distancia como radio."
     up()
     goto(start.x, start.y)
     down()
@@ -45,8 +45,8 @@ def draw_circle(start, end):  # Función para dibujar un círculo con 'c'
     circle(radius)  # Usa el método circle del módulo turtle
     end_fill()
 
-def rectangle(start, end):  # Función para dibujar un rectángulo con 'r'
-    """Draw rectangle from start to end."""
+def rectangle(start, end):
+    "Dibuja un rectángulo desde el punto de inicio hasta el punto final."
     up()
     goto(start.x, start.y)
     down()
@@ -63,8 +63,8 @@ def rectangle(start, end):  # Función para dibujar un rectángulo con 'r'
 
     end_fill()
 
-def triangle(start, end):  # Función para dibujar un triángulo con 't'
-    """Draw triangle from start to end."""
+def triangle(start, end):
+    "Dibuja un triángulo equilátero desde el punto de inicio."
     up()
     goto(start.x, start.y)
     down()
@@ -80,7 +80,7 @@ def triangle(start, end):  # Función para dibujar un triángulo con 't'
     end_fill()
 
 def tap(x, y):
-    """Store starting point or draw shape."""
+    "Almacena el punto inicial o dibuja la forma seleccionada."
     start = state['start']
 
     if start is None:
@@ -92,9 +92,10 @@ def tap(x, y):
         state['start'] = None
 
 def store(key, value):
-    """Store value in state at key."""
+    "Almacena el valor de la forma seleccionada en el estado."
     state[key] = value
 
+# Configuración inicial del estado y pantalla
 state = {'start': None, 'shape': line}
 setup(420, 420, 370, 0)
 onscreenclick(tap)
@@ -112,5 +113,3 @@ onkey(lambda: store('shape', draw_circle), 'c')  # Usa draw_circle en lugar de c
 onkey(lambda: store('shape', rectangle), 'r')
 onkey(lambda: store('shape', triangle), 't')
 done()
-
-
