@@ -1,15 +1,17 @@
-from random import *
+from random import shuffle
 from turtle import *
 from freegames import path
 
 car = path('car.gif')
-symbols = ['🍎', '🍌', '🍇', '🍓', '🍒', '🍍', '🥝', '🍉', '🥑', '🍆', '🥕', '🍋', '🍑', '🍅', '🍏', '🍈'] * 2
-tiles = symbols
-state = {'mark': None, 'taps': 0}  
+"""List of symbols instead of numbers"""
+symbols = ['@', '#', '£', '∞', '$', '%', '&', '!', '*', '+', '-', '/', '?', '§', '♥', '♦', '♣', '♠', '©', '®', '✓', '★', '☺', '☻', '☼', '☽', '⚽', '⚾', '♫', '♪', '♥', '♦']
+tiles = symbols * 2
+state = {'mark': None}
 hide = [True] * 64
+tap_count = 0  # Contador de taps
 
 def square(x, y):
-    "Dibuja un cuadrado blanco con borde negro."
+    """Draw white square with black outline at (x, y)."""
     up()
     goto(x, y)
     down()
@@ -21,18 +23,18 @@ def square(x, y):
     end_fill()
 
 def index(x, y):
-    "Convierte las coordenadas (x, y) al índice de las fichas."
+    """Convert (x, y) coordinates to tiles index."""
     return int((x + 200) // 50 + ((y + 200) // 50) * 8)
 
 def xy(count):
-    "Convierte el número de fichas a coordenadas (x, y)."
+    """Convert tiles count to (x, y) coordinates."""
     return (count % 8) * 50 - 200, (count // 8) * 50 - 200
 
 def tap(x, y):
-    "Actualiza la marca y las fichas ocultas basado en el tap."
+    """Update mark and hidden tiles based on tap."""
+    global tap_count  # Necesario para modificar la variable global
     spot = index(x, y)
     mark = state['mark']
-    state['taps'] += 1  
 
     if mark is None or mark == spot or tiles[mark] != tiles[spot]:
         state['mark'] = spot
@@ -40,9 +42,14 @@ def tap(x, y):
         hide[spot] = False
         hide[mark] = False
         state['mark'] = None
+    
+    tap_count += 1  # Incrementar el contador cada vez que se hace un tap
+    
+def revealed():
+    return all(not h for h in hide)
 
 def draw():
-    "Dibuja la imagen y las fichas."
+    """Draw image and tiles."""
     clear()
     goto(0, 0)
     shape(car)
@@ -54,28 +61,30 @@ def draw():
             square(x, y)
 
     mark = state['mark']
+
     if mark is not None and hide[mark]:
         x, y = xy(mark)
         up()
-        goto(x + 10, y + 5)  
+        goto(x + 15, y + 10)
         color('black')
-        write(tiles[mark], font=('Arial', 20, 'normal'), align="center")
+        write(tiles[mark],align="center",font=('Arial', 30, 'normal'))
 
+    # Dibujar el contador en la esquina superior izquierda
     up()
-    goto(-180, 180)
+    goto(-200, 200)
     color('black')
-    write(f'Taps: {state["taps"]}', font=('Arial', 20, 'normal'))
+    write(f"Contador: {tap_count}", align="left", font=("Arial", 12, "normal"))
 
-    if all(not hidden for hidden in hide):
-        goto(-150, 0)
-        write('¡Felicidades! Has destapado todos los cuadros.', font=('Arial', 20, 'normal'))
-
+    if revealed():
+        up()
+        goto(-200, -250)
+        write("HAS DESTAPADO TODOS LOS CUADROS", align="left", font=("Arial", 14, "bold"))
+        
     update()
     ontimer(draw, 100)
 
-
 shuffle(tiles)
-setup(420, 420, 370, 0)
+setup(420, 550, 370, 0)
 addshape(car)
 hideturtle()
 tracer(False)
