@@ -20,17 +20,16 @@ def inside(head):
     "Return True if head inside boundaries."
     return -200 < head.x < 190 and -200 < head.y < 190
 
-def inside_window(point):
-    """Check if a point is inside the window boundaries."""
-    return -200 < point.x < 190 and -200 < point.y < 190
+def random_position():
+    """Generate a random position for the food within the boundaries."""
+    x = randint(-190, 180) // 10 * 10
+    y = randint(-190, 180) // 10 * 10
+    return vector(x, y)
 
 def move_food():
-    """Move food randomly one step at a time."""
-    direction = randint(0, 3)
-    directions = [vector(0, 20), vector(0, -20), vector(-20, 0), vector(20, 0)] 
-    new_food = food + directions[direction]
-    if inside_window(new_food):
-        food.move(directions[direction])
+    """Move food to a new random position."""
+    global food
+    food = random_position()
 
 def move():
     """Move snake forward one segment."""
@@ -71,3 +70,4 @@ onkey(lambda: change(0, 10), 'Up')
 onkey(lambda: change(0, -10), 'Down')
 move()
 done()
+
