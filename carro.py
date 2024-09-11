@@ -66,7 +66,8 @@ def draw():
     if mark is not None and hide[mark]:
         x, y = xy(mark)
         up()
-        goto(x + 15, y + 10)
+        # Ajustar las coordenadas para centrar el emoji en el cuadrado
+        goto(x + 25, y + 10)  # Mover a la posición central del cuadrado
         color('black')
         write(tiles[mark], align="center", font=('Arial', 30, 'normal'))
 
@@ -81,7 +82,7 @@ def draw():
         up()
         goto(-200, -250)
         write("¡Felicidades! Has ganado, has destapado todo", align="left", font=("Arial", 14, "bold"))
-        
+
     update()
     ontimer(draw, 100)  # Actualizar la pantalla cada 100 milisegundos
 
