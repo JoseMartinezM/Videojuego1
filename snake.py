@@ -7,11 +7,12 @@ food = vector(0, 0)
 snake = [vector(10, 0)]
 aim = vector(0, -10)
 color = ["black", "green", "yellow", "purple", "blue"]
-speed = 100  # Velocidad inicial de la serpiente
-food_speed = 2  # Velocidad de movimiento de la comida (más lenta que la serpiente)
+speed = 100  
+food_speed = 2  
 randomCuerpo = random.randint(0, 4)
 randomComida = random.randint(0, 4)
-food_direction = vector(food_speed, 0)  # Dirección inicial de la comida
+food_direction = vector(food_speed, 0)  
+food_change_time = 0  
 
 def change(x, y):
     "Change snake direction."
@@ -39,7 +40,7 @@ def move_food():
 
 def move():
     """Move snake forward one segment."""
-    global speed, food_direction
+    global speed, food_direction, food_change_time
     head = snake[-1].copy()
     head.move(aim)
 
@@ -53,12 +54,15 @@ def move():
     if head == food:
         print('Snake length:', len(snake))
         move_food()  
-        speed = max(50, speed - 3) 
+        speed = max(50, speed - 3)  
 
     else:
         snake.pop(0)
-
-    # Mover la comida
+    current_time = int(ontimer(move, 0) / 1000)  
+    if current_time - food_change_time > 1:  
+        food_direction = random_direction()
+        food_change_time = current_time
+    
     food.move(food_direction)
     if not inside_window(food):
         food_direction = random_direction()  
