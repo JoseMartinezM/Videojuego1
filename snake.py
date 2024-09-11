@@ -7,11 +7,11 @@ food = vector(0, 0)
 snake = [vector(10, 0)]
 aim = vector(0, -10)
 color = ["black", "green", "yellow", "purple", "blue"]
-speed = 100  
-food_speed = 5  
+speed = 100  # Velocidad inicial de la serpiente
+food_speed = 2  # Velocidad de movimiento de la comida (más lenta que la serpiente)
 randomCuerpo = random.randint(0, 4)
 randomComida = random.randint(0, 4)
-food_direction = vector(random.choice([-food_speed, 0, food_speed]), random.choice([-food_speed, 0, food_speed]))  # Dirección inicial de la comida
+food_direction = vector(food_speed, 0)  # Dirección inicial de la comida
 
 def change(x, y):
     "Change snake direction."
@@ -26,12 +26,16 @@ def inside_window(point):
     """Check if a point is inside the window boundaries."""
     return -200 < point.x < 190 and -200 < point.y < 190
 
+def random_direction():
+    """Generate a random direction for the food."""
+    directions = [vector(food_speed, 0), vector(-food_speed, 0), vector(0, food_speed), vector(0, -food_speed)]
+    return random.choice(directions)
+
 def move_food():
-    """Move food to a new random position."""
-    global food
+    """Move food to a new random position and direction."""
+    global food, food_direction
     food = vector(randint(-190, 180) // 10 * 10, randint(-190, 180) // 10 * 10)
-    global food_direction
-    food_direction = vector(random.choice([-food_speed, 0, food_speed]), random.choice([-food_speed, 0, food_speed]))
+    food_direction = random_direction()
 
 def move():
     """Move snake forward one segment."""
@@ -39,6 +43,7 @@ def move():
     head = snake[-1].copy()
     head.move(aim)
 
+    # Check for collision with boundaries or self
     if not inside(head) or head in snake:
         square(head.x, head.y, 9, 'red')
         update()
@@ -48,17 +53,16 @@ def move():
 
     if head == food:
         print('Snake length:', len(snake))
-        move_food()  
-        speed = max(50, speed - 5) 
+        move_food()  # Move food to a new random position and direction after being eaten
+        speed = max(50, speed - 5)  # Increase the speed (minimum of 50 ms)
 
     else:
         snake.pop(0)
 
-  
+    # Mover la comida
     food.move(food_direction)
     if not inside_window(food):
-        food_direction.x *= -1
-        food_direction.y *= -1
+        food_direction = random_direction()  # Cambiar la dirección cuando la comida toca los bordes
 
     clear()
 
@@ -67,7 +71,7 @@ def move():
 
     square(food.x, food.y, 9, color[randomComida])
     update()
-    ontimer(move, speed)  
+    ontimer(move, speed)  # Use the current speed
 
 setup(420, 420, 370, 0)
 hideturtle()
