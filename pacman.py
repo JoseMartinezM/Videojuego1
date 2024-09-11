@@ -38,34 +38,34 @@ initial_tiles = [
 ]
 
 def generate_map():
-    global tiles
-    tiles = initial_tiles.copy()
-    shuffle(tiles)
+    """Generate a random map ensuring it's valid."""
+    shuffle(initial_tiles)
+    for _ in range(10): 
+        temp_tiles = initial_tiles.copy()
+        if is_map_valid(temp_tiles):
+            return temp_tiles
+    return initial_tiles  
 
-    while not is_map_valid():
-        shuffle(tiles)
-
-def is_map_valid():
-    start = vector(-200, -180)
-    end = vector(180, 180)
-    visited = set()
+def is_map_valid(tiles):
+    """Check if there is a valid path in the map."""
+    start = vector(-200, 180)
+    end = vector(180, -200)
     stack = [start]
+    visited = set()
 
     while stack:
         current = stack.pop()
-        if current in visited:
-            continue
-        visited.add(current)
-
         if current == end:
             return True
-
-        for direction in [vector(20, 0), vector(-20, 0), vector(0, 20), vector(0, -20)]:
-            next_pos = current + direction
-            index = offset(next_pos)
-            if 0 <= index < len(tiles) and tiles[index] == 1 and next_pos not in visited:
-                stack.append(next_pos)
-
+        visited.add(current)
+        directions = [
+            vector(20, 0), vector(-20, 0),
+            vector(0, 20), vector(0, -20)
+        ]
+        for direction in directions:
+            next_point = current + direction
+            if valid(next_point) and next_point not in visited:
+                stack.append(next_point)
     return False
 
 def square(x, y):
@@ -74,11 +74,9 @@ def square(x, y):
     path.goto(x, y)
     path.down()
     path.begin_fill()
-
     for count in range(4):
         path.forward(20)
         path.left(90)
-
     path.end_fill()
 
 def offset(point):
@@ -91,30 +89,23 @@ def offset(point):
 def valid(point):
     "Return True if point is valid in tiles."
     index = offset(point)
-
     if tiles[index] == 0:
         return False
-
     index = offset(point + 19)
-
     if tiles[index] == 0:
         return False
-
     return point.x % 20 == 0 or point.y % 20 == 0
 
 def world():
     "Draw world using path."
     bgcolor('black')
     path.color('blue')
-
     for index in range(len(tiles)):
         tile = tiles[index]
-
         if tile > 0:
             x = (index % 20) * 20 - 200
             y = 180 - (index // 20) * 20
             square(x, y)
-
             if tile == 1:
                 path.up()
                 path.goto(x + 10, y + 10)
@@ -123,17 +114,13 @@ def world():
 def move():
     "Move pacman and all ghosts."
     writer.undo()
-    writer.write(state
-        writer.undo()
     writer.write(state['score'])
-
     clear()
 
     if valid(pacman + aim):
         pacman.move(aim)
 
     index = offset(pacman)
-
     if tiles[index] == 1:
         tiles[index] = 2
         state['score'] += 1
@@ -167,8 +154,8 @@ def move_ghosts():
             point.move(course)
         else:
             directions = [
-                vector(5, 0), vector(-5, 0),
-                vector(0, 5), vector(0, -5)
+                vector(20, 0), vector(-20, 0),
+                vector(0, 20), vector(0, -20)
             ]
             best_direction = min(directions, key=lambda d: abs(pacman - (point + d)))
             course.x = best_direction.x
@@ -187,19 +174,20 @@ writer.goto(160, 160)
 writer.color('white')
 writer.write(state['score'])
 listen()
-onkey(lambda: change(5, 0), 'Right')
-onkey(lambda: change(-5, 0), 'Left')
-onkey(lambda: change(0, 5), 'Up')
-onkey(lambda: change(0, -5), 'Down')
+onkey(lambda: change(20, 0), 'Right')
+onkey(lambda: change(-20, 0), 'Left')
+onkey(lambda: change(0, 20), 'Up')
+onkey(lambda: change(0, -20), 'Down')
 
 def start_game():
     global tiles
     if state['score'] == 0:
-        tiles = initial_tiles.copy() 
+        tiles = initial_tiles.copy()  
     else:
-        generate_map()  
+        tiles = generate_map()  
 
     world()
     move()
 
+start_game()
 done()
