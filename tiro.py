@@ -11,7 +11,7 @@ def tap(x, y):
     if not inside(ball):
         ball.x = -199
         ball.y = -199
-        speed.x = (x + 200) / 20 
+        speed.x = (x + 200) / 20  
         speed.y = (y + 200) / 20
 
 def inside(xy):
@@ -34,7 +34,7 @@ def draw():
 
 def move():
     "Move ball and targets."
-    global target_speed 
+    global target_speed  
 
     if randrange(40) == 0:
         y = randrange(-150, 150)
@@ -57,8 +57,7 @@ def move():
 
     draw()
 
-    
-    target_speed += 0.01  # Aumenta la velocidad de los balones gradualmente
+    target_speed += 0.01  
 
     for target in targets:
         if not inside(target):
@@ -67,16 +66,7 @@ def move():
     ontimer(move, 50)
 
 
-target_speed = 0.5
-
-
-    draw()
-
-    for target in targets:
-        if not inside(target):
-            return
-
-    ontimer(move, 50)
+target_speed = 0.5  
 
 setup(420, 420, 370, 0)
 hideturtle()
