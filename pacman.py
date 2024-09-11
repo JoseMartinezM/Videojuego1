@@ -1,4 +1,4 @@
-from random import choice, randint, shuffle
+from random import choice, randint
 from turtle import *
 from freegames import floor, vector
 
@@ -14,8 +14,8 @@ ghosts = [
     [vector(100, -160), vector(-5, 0)],
 ]
 
-# Base tiles layout
-base_tiles = [
+# fmt: off
+tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -37,11 +37,7 @@ base_tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
-
-tiles = base_tiles.copy()
-power_timer = 0
-normal_speed = 5
-power_speed = 10
+# fmt: on
 
 def square(x, y):
     """Draw square using path at (x, y)."""
@@ -77,14 +73,6 @@ def valid(point):
 
     return point.x % 20 == 0 or point.y % 20 == 0
 
-def randomize_tiles():
-    """Slightly modify the game board."""
-    for i in range(len(tiles)):
-        if tiles[i] == 1 and randint(1, 10) == 1:
-            tiles[i] = 0
-        elif tiles[i] == 0 and randint(1, 20) == 1:
-            tiles[i] = 1
-
 def world():
     """Draw world using path."""
     bgcolor('black')
@@ -105,7 +93,6 @@ def world():
 
 def move():
     """Move pacman and all ghosts."""
-    global power_timer
     writer.undo()
     writer.write(state['score'])
 
@@ -122,29 +109,28 @@ def move():
         x = (index % 20) * 20 - 200
         y = 180 - (index // 20) * 20
         square(x, y)
-        if randint(1, 10) == 1:  
-            power_timer = 50  
 
-    speed = power_speed if power_timer > 0 else normal_speed
     up()
     goto(pacman.x + 10, pacman.y + 10)
     dot(20, 'yellow')
 
     for point, course in ghosts:
-        if valid(point + course):
-            point.move(course)
+        options = [
+            vector(10, 0),
+            vector(-10, 0),
+            vector(0, 10),
+            vector(0, -10),
+        ]
+        
+        plan = min(options, key=lambda v: abs(pacman - (point + v)))
+        if valid(point + plan):
+            point.move(plan)
         else:
-            # Smarter ghost movement
-            options = [
-                vector(speed, 0),
-                vector(-speed, 0),
-                vector(0, speed),
-                vector(0, -speed),
-            ]
-            plan = min(options, key=lambda v: abs(pacman - (point + v)))
-            course.x = plan.x
-            course.y = plan.y
-
+            valid_options = [v for v in options if valid(point + v)]
+            if valid_options:
+                plan = min(valid_options, key=lambda v: abs(pacman - (point + v)))
+                point.move(plan)
+        
         up()
         goto(point.x + 10, point.y + 10)
         dot(20, 'red')
@@ -153,10 +139,8 @@ def move():
 
     for point, course in ghosts:
         if abs(pacman - point) < 20:
-            path.clear()
             return
 
-    power_timer = max(0, power_timer - 1)
     ontimer(move, 50)  
 
 def change(x, y):
@@ -164,25 +148,6 @@ def change(x, y):
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
-
-def reset_game():
-    """Reset the game state."""
-    global tiles, pacman, ghosts, power_timer
-    tiles = base_tiles.copy()
-    randomize_tiles()
-    pacman = vector(-40, -80)
-    ghosts = [
-        [vector(-180, 160), vector(5, 0)],
-        [vector(-180, -160), vector(0, 5)],
-        [vector(100, 160), vector(0, -5)],
-        [vector(100, -160), vector(-5, 0)],
-    ]
-    power_timer = 0
-    state['score'] = 0
-    path.clear()
-    writer.clear()
-    world()
-    move()
 
 setup(420, 420, 370, 0)
 hideturtle()
@@ -195,7 +160,6 @@ onkey(lambda: change(5, 0), 'Right')
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
-onkey(reset_game, 'n')  
 world()
 move()
 done()
