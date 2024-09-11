@@ -1,8 +1,8 @@
-from random import choice
+from random import choice, randint
 from turtle import *
 from freegames import floor, vector
 
-state = {'score': 0}
+state = {'score': 0, 'speed': 50}
 path = Turtle(visible=False)
 writer = Turtle(visible=False)
 aim = vector(5, 0)
@@ -14,7 +14,7 @@ ghosts = [
     [vector(100, -160), vector(-5, 0)],
 ]
 
-tiles = [
+base_tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -37,6 +37,11 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
+def generate_map():
+    """Generate a new map each time the game starts."""
+    global tiles
+    tiles = base_tiles[:]  
+    random.shuffle(tiles)
 
 def square(x, y):
     "Draw square using path at (x, y)."
@@ -105,6 +110,7 @@ def move():
     if tiles[index] == 1:
         tiles[index] = 2
         state['score'] += 1
+        state['speed'] = max(20, state['speed'] - 2)  
         x = (index % 20) * 20 - 200
         y = 180 - (index // 20) * 20
         square(x, y)
@@ -126,8 +132,7 @@ def move():
         if abs(pacman - point) < 20:
             return
 
-    ontimer(move, 50)
-
+    ontimer(move, state['speed'])  
 
 def move_ghosts():
     """Move ghosts and make them smarter."""
@@ -135,7 +140,6 @@ def move_ghosts():
         if valid(point + course):
             point.move(course)
         else:
-            # Make ghosts smarter by choosing a direction that moves them closer to Pacman
             directions = [
                 vector(5, 0), vector(-5, 0),
                 vector(0, 5), vector(0, -5)
@@ -143,7 +147,6 @@ def move_ghosts():
             best_direction = min(directions, key=lambda d: abs(pacman - (point + d)))
             course.x = best_direction.x
             course.y = best_direction.y
-
 
 def change(x, y):
     "Change pacman aim if valid."
@@ -157,11 +160,12 @@ tracer(False)
 writer.goto(160, 160)
 writer.color('white')
 writer.write(state['score'])
+generate_map()  
+world()
 listen()
 onkey(lambda: change(5, 0), 'Right')
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
-world()
 move()
 done()
