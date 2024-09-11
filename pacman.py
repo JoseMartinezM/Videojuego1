@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, randint
 from turtle import *
 from math import sqrt
 from freegames import floor, vector
@@ -9,13 +9,14 @@ writer = Turtle(visible=False)
 aim = vector(5, 0)
 pacman = vector(-40, -80)
 ghosts = [
-    [vector(-180, 160), vector(5, 0)],
-    [vector(-180, -160), vector(0, 5)],
-    [vector(100, 160), vector(0, -5)],
-    [vector(100, -160), vector(-5, 0)],
+    [vector(-180, 160), vector(2, 0)],
+    [vector(-180, -160), vector(0, 2)],
+    [vector(100, 160), vector(0, -2)],
+    [vector(100, -160), vector(-2, 0)],
 ]
+
 # fmt: off
-"""Cambios del mapa"""
+"""Generación aleatoria del mapa"""
 tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
@@ -40,6 +41,15 @@ tiles = [
 ]
 # fmt: on
 
+def generate_map():
+    """Change map slightly."""
+    num_changes = 10  
+
+    indices = [i for i in range(len(tiles))]
+    indices_to_change = choice(indices, num_changes)
+
+    for index in indices_to_change:
+        tiles[index] = 1 if tiles[index] == 0 else 0
 
 def square(x, y):
     """Draw square using path at (x, y)."""
@@ -54,14 +64,12 @@ def square(x, y):
 
     path.end_fill()
 
-
 def offset(point):
     """Return offset of point in tiles."""
     x = (floor(point.x, 20) + 200) / 20
     y = (180 - floor(point.y, 20)) / 20
     index = int(x + y * 20)
     return index
-
 
 def valid(point):
     """Return True if point is valid in tiles."""
@@ -76,7 +84,6 @@ def valid(point):
         return False
 
     return point.x % 20 == 0 or point.y % 20 == 0
-
 
 def world():
     """Draw world using path."""
@@ -95,7 +102,6 @@ def world():
                 path.up()
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
-
 
 def distance(p1, p2):
     """Return the Euclidean distance between two points."""
@@ -128,14 +134,14 @@ def move():
 
     for point, course in ghosts:
         if valid(point + course):
-            point.move(course*4)
+            point.move(course*2)  
         else:
             """Update board state if Pacman is in a cell with a dot"""
             options = [
-                vector(5, 0),  # Right
-                vector(-5, 0),  # Left
-                vector(0, 5),  # Up
-                vector(0, -5),  # Down
+                vector(2, 0),  
+                vector(-2, 0),  
+                vector(0, 2),  
+                vector(0, -2),  
             ]
 
             """Filter options to only include valid movements"""
@@ -146,7 +152,7 @@ def move():
                 """Add some randomness in the choice"""
                 best_move = min(valid_options, key=lambda option: abs((point + option).x - pacman.x) + abs((point + option).y - pacman.y))
                 """Add a small chance that the ghost will move in a valid random direction"""
-                if choice([True, False]):  # 50% chance
+                if choice([True, False]):  
                     best_move = choice(valid_options)
 
                 """Assign the new move to the ghost"""
@@ -166,15 +172,11 @@ def move():
 
     ontimer(move, 100)
 
-
-
-
 def change(x, y):
     """Change pacman aim if valid."""
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
-
 
 setup(420, 420, 370, 0)
 hideturtle()
@@ -187,6 +189,7 @@ onkey(lambda: change(5, 0), 'Right')
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
+generate_map()  
 world()
 move()
 done()
