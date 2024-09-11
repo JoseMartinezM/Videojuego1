@@ -1,56 +1,44 @@
-"""Pacman, classic arcade game.
-
-Exercises
-
-1. Change the board.
-2. Change the number of ghosts.
-3. Change where pacman starts.
-4. Make the ghosts faster/slower.
-5. Make the ghosts smarter.
-"""
-#import functions from libraries
 from random import choice
-from turtle import Turtle, bgcolor, clear, up, goto, dot, update, ontimer
-from turtle import setup, hideturtle, tracer, listen, onkey, done
+import turtle as t
 
 from freegames import floor, vector
 
-#initialize variables
-
-#pacman score
+# Initialize state
 state = {'score': 0}
-#path to draw the game
-path = Turtle(visible=False)
-#score writer
-writer = Turtle(visible=False)
-#pacman direction
+
+# Initialize turtle objects
+path = t.Turtle(visible=False)
+writer = t.Turtle(visible=False)
+
+# Initialize aim for pacman movement
 aim = vector(5, 0)
-#pacman starting position
+
+# Initialize pacman position
 pacman = vector(-40, -80)
-#ghosts starting positions and directions
+
+# Initialize ghosts positions and movements
 ghosts = [
     [vector(-180, 160), vector(5, 0)],
     [vector(-180, -160), vector(0, 5)],
     [vector(100, 160), vector(0, -5)],
     [vector(100, -160), vector(-5, 0)],
 ]
-# fmt: off
 
-#game board
+# Board configuration
 tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
     0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0,
     0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
@@ -59,13 +47,10 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
-# fmt: on
 
-#functions
 
-#draw square
+# Draw a square at given position
 def square(x, y):
-    """Draw square using path at (x, y)."""
     path.up()
     path.goto(x, y)
     path.down()
@@ -77,17 +62,17 @@ def square(x, y):
 
     path.end_fill()
 
-#offset of point in tiles
+
+# Convert coodrinate to index in tiles list
 def offset(point):
-    """Return offset of point in tiles."""
     x = (floor(point.x, 20) + 200) / 20
     y = (180 - floor(point.y, 20)) / 20
     index = int(x + y * 20)
     return index
 
-#check if point is valid
+
+# Check if a given point is valid on the board
 def valid(point):
-    """Return True if point is valid in tiles."""
     index = offset(point)
 
     if tiles[index] == 0:
@@ -100,10 +85,10 @@ def valid(point):
 
     return point.x % 20 == 0 or point.y % 20 == 0
 
-#draw world
+
+# Draw the board
 def world():
-    """Draw world using path."""
-    bgcolor('black')
+    t.bgcolor('black')
     path.color('blue')
 
     for index in range(len(tiles)):
@@ -119,13 +104,13 @@ def world():
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
 
-#move pacman and ghosts
+
+# Move pacman and ghosts
 def move():
-    """Move pacman and all ghosts."""
     writer.undo()
     writer.write(state['score'])
 
-    clear()
+    t.clear()
 
     if valid(pacman + aim):
         pacman.move(aim)
@@ -139,62 +124,56 @@ def move():
         y = 180 - (index // 20) * 20
         square(x, y)
 
-    up()
-    goto(pacman.x + 10, pacman.y + 10)
-    dot(20, 'yellow')
+    t.up()
+    t.goto(pacman.x + 10, pacman.y + 10)
+    t.dot(20, 'yellow')
 
     for point, course in ghosts:
         if valid(point + course):
             point.move(course)
         else:
             options = [
-                vector(15, 0),
-                vector(-15, 0),
-                vector(0, 15),
-                vector(0, -15),
+                vector(8, 0),
+                vector(-8, 0),
+                vector(0, 8),
+                vector(0, -8),
             ]
             plan = choice(options)
             course.x = plan.x
             course.y = plan.y
 
-        up()
-        goto(point.x + 10, point.y + 10)
-        dot(20, 'red')
+        t.up()
+        t.goto(point.x + 10, point.y + 10)
+        t.dot(20, 'red')
 
-    update()
+    t.update()
 
     for point, course in ghosts:
         if abs(pacman - point) < 20:
             return
 
-    ontimer(move, 100)
+    t.ontimer(move, 50)
 
-#change pacman aim
+
+# Change the direction of movement for pacman
 def change(x, y):
-    """Change pacman aim if valid."""
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
 
 
-#main
-
-#setup game
-setup(420, 420, 370, 0)
-hideturtle()
-tracer(False)
+# Setup the game window and controls
+t.setup(420, 420, 370, 0)
+t.hideturtle()
+t.tracer(False)
 writer.goto(160, 160)
 writer.color('white')
 writer.write(state['score'])
-#listen to keyboard
-listen()
-#set pacman movement
-onkey(lambda: change(5, 0), 'Right')
-onkey(lambda: change(-5, 0), 'Left')
-onkey(lambda: change(0, 5), 'Up')
-onkey(lambda: change(0, -5), 'Down')
-#draw world
+t.listen()
+t.onkey(lambda: change(5, 0), 'Right')
+t.onkey(lambda: change(-5, 0), 'Left')
+t.onkey(lambda: change(0, 5), 'Up')
+t.onkey(lambda: change(0, -5), 'Down')
 world()
-#start game
 move()
-done()
+t.done()
