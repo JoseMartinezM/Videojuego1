@@ -3,8 +3,8 @@ from turtle import *
 from freegames import path
 
 car = path('car.gif')
-"""List of symbols instead of numbers"""
-symbols = ['@', '#', '£', '∞', '$', '%', '&', '!', '*', '+', '-', '/', '?', '§', '♥', '♦', '♣', '♠', '©', '®', '✓', '★', '☺', '☻', '☼', '☽', '⚽', '⚾', '♫', '♪', '♥', '♦']
+"""List of emojis instead of symbols"""
+symbols = ['🍎', '🍏', '🍊', '🍋', '🍉', '🍇', '🍓', '🍈', '🍒', '🍑', '🍍', '🥭', '🥥', '🥝', '🍅', '🥕', '🥦', '🥒', '🌽', '🥔', '🍠', '🍆', '🌶', '🌰', '🧄', '🧅', '🧈', '🍯', '🧂', '🧃', '🍹', '🍺', '🍻', '🍷', '🍸', '🍶', '🍵', '🍶', '🥃', '🧉', '🧊', '🧋']
 tiles = symbols * 2
 state = {'mark': None}
 hide = [True] * 64
@@ -73,12 +73,12 @@ def draw():
     up()
     goto(-200, 200)
     color('black')
-    write(f"Contador: {tap_count}", align="left", font=("Arial", 12, "normal"))
+    write(f"Contador de tabs: {tap_count}", align="left", font=("Arial", 12, "normal"))
 
     if revealed():
         up()
         goto(-200, -250)
-        write("HAS DESTAPADO TODOS LOS CUADROS", align="left", font=("Arial", 14, "bold"))
+        write("Felicidades has ganado, has destapado todo", align="left", font=("Arial", 14, "bold"))
         
     update()
     ontimer(draw, 100)
