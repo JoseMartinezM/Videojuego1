@@ -20,7 +20,7 @@ def line(start, end):
     down()
     goto(end.x, end.y)
 
-def square(start, end):  # Función para dibujar un cuadrado con 's'
+def square(start, end):  
     """Draw square from start to end."""
     up()
     goto(start.x, start.y)
@@ -33,19 +33,19 @@ def square(start, end):  # Función para dibujar un cuadrado con 's'
 
     end_fill()
 
-def circle(start, end):  # Función para dibujar un círculo con 'c'
+def circle(start, end):  
     """Draw circle from start to end."""
     up()
     goto(start.x, start.y)
     down()
     
-    radius = sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2)  # Calcula el radio
+    radius = sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2)  
 
     begin_fill()
-    circle(radius)  # Usa el método circle del módulo turtle
+    circle(radius)  
     end_fill()
 
-def rectangle(start, end):  # Función para dibujar un rectángulo con 'r'
+def rectangle(start, end):  
     """Draw rectangle from start to end."""
     up()
     goto(start.x, start.y)
@@ -63,7 +63,7 @@ def rectangle(start, end):  # Función para dibujar un rectángulo con 'r'
 
     end_fill()
 
-def triangle(start, end):  # Función para dibujar un triángulo con 't'
+def triangle(start, end):  
     """Draw triangle from start to end."""
     up()
     goto(start.x, start.y)
@@ -71,11 +71,11 @@ def triangle(start, end):  # Función para dibujar un triángulo con 't'
     
     begin_fill()
 
-    side_length = sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2)  # Calcula la longitud del lado
+    side_length = sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2) 
 
     for _ in range(3):
         forward(side_length)
-        left(120)  # 120 grados para el triángulo equilátero
+        left(120)  
 
     end_fill()
 
@@ -105,11 +105,12 @@ onkey(lambda: color('white'), 'W')
 onkey(lambda: color('green'), 'G')
 onkey(lambda: color('blue'), 'B')
 onkey(lambda: color('red'), 'R')
-onkey(lambda: color('purple'), 'P')  # Añadir el color morado con P
+onkey(lambda: color('purple'), 'P') 
 onkey(lambda: store('shape', line), 'l')
 onkey(lambda: store('shape', square), 's')
 onkey(lambda: store('shape', circle), 'c')
 onkey(lambda: store('shape', rectangle), 'r')
 onkey(lambda: store('shape', triangle), 't')
 done()
+
 
