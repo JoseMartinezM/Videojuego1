@@ -15,7 +15,7 @@ def tap(x, y):
         speed.y = (y + 200) / 20
 
 def inside(xy):
-    "Return True if xy within screen."
+    "Return True if xy is within screen."
     return -200 < xy.x < 200 and -200 < xy.y < 200
 
 def draw():
@@ -53,18 +53,16 @@ def move():
 
     for target in dupe:
         if abs(target - ball) > 13:
+            if not inside(target):
+                target.x = 200
+                target.y = randrange(-150, 150)
             targets.append(target)
 
     draw()
 
-    target_speed += 0.01  
-
-    for target in targets:
-        if not inside(target):
-            return
+    target_speed += 0.01 
 
     ontimer(move, 50)
-
 
 target_speed = 0.5  
 
@@ -75,3 +73,4 @@ tracer(False)
 onscreenclick(tap)
 move()
 done()
+
