@@ -1,5 +1,6 @@
-from random import randint, choice
+from random import choice
 from turtle import *
+from math import sqrt
 from freegames import floor, vector
 
 state = {'score': 0}
@@ -13,74 +14,72 @@ ghosts = [
     [vector(100, 160), vector(0, -5)],
     [vector(100, -160), vector(-5, 0)],
 ]
-
-# Initial map setup
+# fmt: off
+"""Cambios del mapa"""
 tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+    0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0,
+    0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0,
+    0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0,
+    0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0,
+    0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0,
+    0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0,
+    0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
+# fmt: on
+
 
 def square(x, y):
-    "Draw square using path at (x, y)."
+    """Draw square using path at (x, y)."""
     path.up()
     path.goto(x, y)
     path.down()
     path.begin_fill()
 
-    for _ in range(4):
+    for count in range(4):
         path.forward(20)
         path.left(90)
 
     path.end_fill()
 
+
 def offset(point):
-    "Return offset of point in tiles."
-    x = (floor(point.x, 20) + 200) // 20
-    y = (180 - floor(point.y, 20)) // 20
+    """Return offset of point in tiles."""
+    x = (floor(point.x, 20) + 200) / 20
+    y = (180 - floor(point.y, 20)) / 20
     index = int(x + y * 20)
     return index
 
-def valid(point):
-    "Return True if point is valid in tiles."
-    index = offset(point)
 
-    if index < 0 or index >= len(tiles):
-        return False
+def valid(point):
+    """Return True if point is valid in tiles."""
+    index = offset(point)
 
     if tiles[index] == 0:
         return False
 
     index = offset(point + 19)
 
-    if index < 0 or index >= len(tiles):
-        return False
-
     if tiles[index] == 0:
         return False
 
     return point.x % 20 == 0 or point.y % 20 == 0
 
-def generate_map():
-    """Generate a new map with some modifications."""
-    num_changes = randint(8, 10)
-    indices_to_change = [randint(0, len(tiles) - 1) for _ in range(num_changes)]
-    for i in indices_to_change:
-        tiles[i] = 1 - tiles[i]  # Toggle between 0 and 1
 
 def world():
-    "Draw world using path."
+    """Draw world using path."""
     bgcolor('black')
     path.color('blue')
 
@@ -97,18 +96,25 @@ def world():
                 path.goto(x + 10, y + 10)
                 path.dot(2, 'white')
 
+
+def distance(p1, p2):
+    """Return the Euclidean distance between two points."""
+    return sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2)
+
 def move():
-    "Move pacman and all ghosts."
+    """Move pacman and all ghosts."""
     writer.undo()
     writer.write(state['score'])
 
     clear()
 
+    """Move Pacman if the move is valid"""
     if valid(pacman + aim):
         pacman.move(aim)
 
     index = offset(pacman)
 
+    """Update board state if Pacman is in a cell with a dot"""
     if tiles[index] == 1:
         tiles[index] = 2
         state['score'] += 1
@@ -116,72 +122,71 @@ def move():
         y = 180 - (index // 20) * 20
         square(x, y)
 
-        # Slightly increase Pacman's speed
-        aim.x *= 1.01
-        aim.y *= 1.01
-
     up()
     goto(pacman.x + 10, pacman.y + 10)
     dot(20, 'yellow')
 
-    move_ghosts()
-
     for point, course in ghosts:
+        if valid(point + course):
+            point.move(course*4)
+        else:
+            """Update board state if Pacman is in a cell with a dot"""
+            options = [
+                vector(5, 0),  # Right
+                vector(-5, 0),  # Left
+                vector(0, 5),  # Up
+                vector(0, -5),  # Down
+            ]
+
+            """Filter options to only include valid movements"""
+            valid_options = [option for option in options if valid(point + option)]
+
+            """If there are valid options, choose the one closest to Pacman"""
+            if valid_options:
+                """Add some randomness in the choice"""
+                best_move = min(valid_options, key=lambda option: abs((point + option).x - pacman.x) + abs((point + option).y - pacman.y))
+                """Add a small chance that the ghost will move in a valid random direction"""
+                if choice([True, False]):  # 50% chance
+                    best_move = choice(valid_options)
+
+                """Assign the new move to the ghost"""
+                course.x = best_move.x
+                course.y = best_move.y
+
         up()
         goto(point.x + 10, point.y + 10)
         dot(20, 'red')
 
     update()
 
+    """Check if the ghosts reach Pacman"""
     for point, course in ghosts:
-        if abs(pacman - point) < 15:
-            print("Game over!")
+        if abs(pacman - point) < 20:
             return
 
     ontimer(move, 100)
 
-def move_ghosts():
-    "Move ghosts randomly."
-    for point, course in ghosts:
-        if valid(point + course):
-            point.move(course)
-        else:
-            course.x = choice([-5, 5])
-            course.y = choice([-5, 5])
 
-        # Make ghosts chase Pacman
-        for ghost in ghosts:
-            point, course = ghost
-            if abs(pacman.x - point.x) > abs(pacman.y - point.y):
-                if pacman.x > point.x:
-                    course.x = 5
-                else:
-                    course.x = -5
-                course.y = 0
-            else:
-                if pacman.y > point.y:
-                    course.y = 5
-                else:
-                    course.y = -5
-                course.x = 0
 
-def start_game():
-    "Start a new game."
-    generate_map()
-    setup(420, 420, 370, 0)
-    bgcolor('black')
-    tracer(False)
-    world()
-    writer.color('white')
-    writer.penup()
-    writer.goto(-180, 160)
-    writer.write(state['score'])
-    listen()
-    onkey(lambda: aim.set(-5, 0), 'Left')
-    onkey(lambda: aim.set(5, 0), 'Right')
-    onkey(lambda: aim.set(0, 5), 'Up')
-    onkey(lambda: aim.set(0, -5), 'Down')
-    move()
-    mainloop()
 
-start_game()
+def change(x, y):
+    """Change pacman aim if valid."""
+    if valid(pacman + vector(x, y)):
+        aim.x = x
+        aim.y = y
+
+
+setup(420, 420, 370, 0)
+hideturtle()
+tracer(False)
+writer.goto(160, 160)
+writer.color('white')
+writer.write(state['score'])
+listen()
+onkey(lambda: change(5, 0), 'Right')
+onkey(lambda: change(-5, 0), 'Left')
+onkey(lambda: change(0, 5), 'Up')
+onkey(lambda: change(0, -5), 'Down')
+world()
+move()
+done()
