@@ -128,10 +128,10 @@ def move():
 
     for point, course in ghosts:
         options = [
-            vector(7, 0),
-            vector(-7, 0),
-            vector(0, 7),
-            vector(0, -7),
+            vector(8.5, 0),
+            vector(-8.5, 0),
+            vector(0, 8.5),
+            vector(0, -8.5),
         ]
         
         plan = min(options, key=lambda v: abs(pacman - (point + v)))
@@ -153,7 +153,7 @@ def move():
         if abs(pacman - point) < 20:
             return
 
-    ontimer(move, 70)  
+    ontimer(move, 80)  
 
 def change(x, y):
     """Change pacman aim if valid."""
