@@ -7,11 +7,9 @@ import time
 food = vector(0, 0)
 snake = [vector(10, 0)]
 aim = vector(0, -10)
-color = ["black", "green", "yellow", "purple", "blue", "orange", "pink", "cyan", "brown", "magenta"]
+color = ["black", "green", "yellow", "purple", "blue", "orange", "pink", "cyan", "brown", "magenta"]  
 speed = 100  
 food_speed = 2  
-randomCuerpo = random.randint(0, 4)
-randomComida = random.randint(0, 4)
 food_direction = vector(food_speed, 0)  
 food_change_time = time.time()  
 
@@ -59,6 +57,7 @@ def move():
 
     else:
         snake.pop(0)
+    
     current_time = time.time()
     if current_time - food_change_time > 1:  
         food_direction = random_direction()
@@ -69,7 +68,10 @@ def move():
         food_direction = random_direction()  
 
     clear()
-
+    
+    randomCuerpo = random.randint(0, len(color) - 1)
+    randomComida = random.randint(0, len(color) - 2)  
+    
     for body in snake:
         square(body.x, body.y, 9, color[randomCuerpo])
 
