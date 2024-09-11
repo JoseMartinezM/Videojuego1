@@ -1,4 +1,4 @@
-from random import choice, shuffle  
+from random import choice, shuffle
 from turtle import *
 from freegames import floor, vector
 
@@ -36,7 +36,6 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
-
 
 def square(x, y):
     "Draw square using path at (x, y)."
@@ -108,9 +107,8 @@ def move():
         x = (index % 20) * 20 - 200
         y = 180 - (index // 20) * 20
         square(x, y)
-
-        aim.x *= 1.1
-        aim.y *= 1.1
+        global pacman_speed
+        pacman_speed *= 1.1
 
     up()
     goto(pacman.x + 10, pacman.y + 10)
@@ -129,7 +127,7 @@ def move():
         if abs(pacman - point) < 20:
             return
 
-    ontimer(move, 50)
+    ontimer(move, int(100 / pacman_speed))  
 
 def move_ghosts():
     """Move ghosts and make them smarter."""
@@ -139,8 +137,7 @@ def move_ghosts():
         else:
             directions = [
                 vector(5, 0), vector(-5, 0),
-                vector(0, 5), vector
-                                vector(0, -5)
+                vector(0, 5), vector(0, -5)
             ]
             best_direction = min(directions, key=lambda d: abs(pacman - (point + d)))
             course.x = best_direction.x
@@ -155,8 +152,8 @@ def change(x, y):
 def generate_map():
     "Generate a new random map."
     global tiles
-    shuffle(tiles)
-    world()  
+    shuffle(tiles)  
+    world() 
 
 setup(420, 420, 370, 0)
 hideturtle()
@@ -169,6 +166,8 @@ onkey(lambda: change(5, 0), 'Right')
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
+
 generate_map()
+pacman_speed = 1  
 move()
 done()
