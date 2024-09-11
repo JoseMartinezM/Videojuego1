@@ -15,7 +15,7 @@ ghosts = [
 ]
 
 # fmt: off
-tiles = [
+base_tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -38,6 +38,8 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
 # fmt: on
+
+tiles = list(base_tiles)
 
 def square(x, y):
     """Draw square using path at (x, y)."""
@@ -72,6 +74,16 @@ def valid(point):
         return False
 
     return point.x % 20 == 0 or point.y % 20 == 0
+
+def randomize_tiles():
+    """Slightly modify the game board."""
+    global tiles
+    tiles = list(base_tiles)
+    for i in range(len(tiles)):
+        if tiles[i] == 1 and randint(1, 10) == 1:
+            tiles[i] = 0
+        elif tiles[i] == 0 and randint(1, 20) == 1:
+            tiles[i] = 1
 
 def world():
     """Draw world using path."""
@@ -116,10 +128,10 @@ def move():
 
     for point, course in ghosts:
         options = [
-            vector(10, 0),
-            vector(-10, 0),
-            vector(0, 10),
-            vector(0, -10),
+            vector(7, 0),
+            vector(-7, 0),
+            vector(0, 7),
+            vector(0, -7),
         ]
         
         plan = min(options, key=lambda v: abs(pacman - (point + v)))
@@ -141,13 +153,30 @@ def move():
         if abs(pacman - point) < 20:
             return
 
-    ontimer(move, 50)  
+    ontimer(move, 70)  
 
 def change(x, y):
     """Change pacman aim if valid."""
     if valid(pacman + vector(x, y)):
         aim.x = x
         aim.y = y
+
+def reset_game():
+    """Reset the game state."""
+    global pacman, ghosts, state
+    randomize_tiles()
+    pacman = vector(-40, -80)
+    ghosts = [
+        [vector(-180, 160), vector(5, 0)],
+        [vector(-180, -160), vector(0, 5)],
+        [vector(100, 160), vector(0, -5)],
+        [vector(100, -160), vector(-5, 0)],
+    ]
+    state['score'] = 0
+    path.clear()
+    writer.clear()
+    world()
+    move()
 
 setup(420, 420, 370, 0)
 hideturtle()
@@ -160,6 +189,7 @@ onkey(lambda: change(5, 0), 'Right')
 onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
+onkey(reset_game, 'n') 
 world()
 move()
 done()
