@@ -14,7 +14,7 @@ ghosts = [
     [vector(100, -160), vector(-5, 0)],
 ]
 
-tiles = [
+initial_tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
     0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -36,6 +36,37 @@ tiles = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ]
+
+def generate_map():
+    global tiles
+    tiles = initial_tiles.copy()
+    shuffle(tiles)
+
+    while not is_map_valid():
+        shuffle(tiles)
+
+def is_map_valid():
+    start = vector(-200, -180)
+    end = vector(180, 180)
+    visited = set()
+    stack = [start]
+
+    while stack:
+        current = stack.pop()
+        if current in visited:
+            continue
+        visited.add(current)
+
+        if current == end:
+            return True
+
+        for direction in [vector(20, 0), vector(-20, 0), vector(0, 20), vector(0, -20)]:
+            next_pos = current + direction
+            index = offset(next_pos)
+            if 0 <= index < len(tiles) and tiles[index] == 1 and next_pos not in visited:
+                stack.append(next_pos)
+
+    return False
 
 def square(x, y):
     "Draw square using path at (x, y)."
@@ -92,6 +123,8 @@ def world():
 def move():
     "Move pacman and all ghosts."
     writer.undo()
+    writer.write(state
+        writer.undo()
     writer.write(state['score'])
 
     clear()
@@ -107,8 +140,6 @@ def move():
         x = (index % 20) * 20 - 200
         y = 180 - (index // 20) * 20
         square(x, y)
-        global pacman_speed
-        pacman_speed *= 1.1
 
     up()
     goto(pacman.x + 10, pacman.y + 10)
@@ -127,7 +158,7 @@ def move():
         if abs(pacman - point) < 20:
             return
 
-    ontimer(move, int(100 / pacman_speed))  
+    ontimer(move, 50)
 
 def move_ghosts():
     """Move ghosts and make them smarter."""
@@ -149,12 +180,6 @@ def change(x, y):
         aim.x = x
         aim.y = y
 
-def generate_map():
-    "Generate a new random map."
-    global tiles
-    shuffle(tiles)  
-    world() 
-
 setup(420, 420, 370, 0)
 hideturtle()
 tracer(False)
@@ -167,7 +192,14 @@ onkey(lambda: change(-5, 0), 'Left')
 onkey(lambda: change(0, 5), 'Up')
 onkey(lambda: change(0, -5), 'Down')
 
-generate_map()
-pacman_speed = 1  
-move()
+def start_game():
+    global tiles
+    if state['score'] == 0:
+        tiles = initial_tiles.copy() 
+    else:
+        generate_map()  
+
+    world()
+    move()
+
 done()
