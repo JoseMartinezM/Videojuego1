@@ -10,11 +10,8 @@ Exercises
 """
 
 from turtle import *
-
 from freegames import vector
-
 from math import sqrt
-
 
 def line(start, end):
     """Draw line from start to end."""
@@ -23,60 +20,50 @@ def line(start, end):
     down()
     goto(end.x, end.y)
 
-
-def square(start, end): #Funcion para añadir un cuadrado con s
+def square(start, end):  # Función para dibujar un cuadrado con 's'
     """Draw square from start to end."""
     up()
     goto(start.x, start.y)
     down()
     begin_fill()
 
-    for count in range(4):
+    for _ in range(4):
         forward(end.x - start.x)
         left(90)
 
     end_fill()
 
-
-def circle(start, end): #Funcion para añadir un circulo con c
+def circle(start, end):  # Función para dibujar un círculo con 'c'
     """Draw circle from start to end."""
     up()
     goto(start.x, start.y)
     down()
     
-    width = sqrt((end.x - start.x)**2) + ((end.y - start.y)**2)
+    radius = sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2)  # Calcula el radio
 
     begin_fill()
-
-
-    for count in range(360):
-        forward(width/360)
-        left(1)
-
+    circle(radius)  # Usa el método circle del módulo turtle
     end_fill()
 
-    pass  # TODO
-
-
-def rectangle(start, end): # Funbcion para un rectangulo
+def rectangle(start, end):  # Función para dibujar un rectángulo con 'r'
     """Draw rectangle from start to end."""
     up()
     goto(start.x, start.y)
     down()
     begin_fill()
 
-    for count in range(2):
-        forward(end.x - start.x)
+    width = end.x - start.x
+    height = end.y - start.y
+
+    for _ in range(2):
+        forward(width)
         left(90)
-        forward(end.y - start.y)
+        forward(height)
         left(90)
-        
+
     end_fill()
 
-    pass  # TODO
-
-
-def triangle(start, end): #Funcion para triangulo
+def triangle(start, end):  # Función para dibujar un triángulo con 't'
     """Draw triangle from start to end."""
     up()
     goto(start.x, start.y)
@@ -84,16 +71,13 @@ def triangle(start, end): #Funcion para triangulo
     
     begin_fill()
 
-    forward(end.x - start.x)
-    left(90)
-    forward(end.x - start.x)
-    left(135)
-    forward(end.x - start.x)
+    side_length = sqrt((end.x - start.x) ** 2 + (end.y - start.y) ** 2)  # Calcula la longitud del lado
+
+    for _ in range(3):
+        forward(side_length)
+        left(120)  # 120 grados para el triángulo equilátero
 
     end_fill()
-
-    pass  # TODO
-
 
 def tap(x, y):
     """Store starting point or draw shape."""
@@ -107,11 +91,9 @@ def tap(x, y):
         shape(start, end)
         state['start'] = None
 
-
 def store(key, value):
     """Store value in state at key."""
     state[key] = value
-
 
 state = {'start': None, 'shape': line}
 setup(420, 420, 370, 0)
@@ -123,10 +105,11 @@ onkey(lambda: color('white'), 'W')
 onkey(lambda: color('green'), 'G')
 onkey(lambda: color('blue'), 'B')
 onkey(lambda: color('red'), 'R')
-onkey(lambda: color('purple'),'P') #Añadir el color morado con P
+onkey(lambda: color('purple'), 'P')  # Añadir el color morado con P
 onkey(lambda: store('shape', line), 'l')
 onkey(lambda: store('shape', square), 's')
 onkey(lambda: store('shape', circle), 'c')
 onkey(lambda: store('shape', rectangle), 'r')
 onkey(lambda: store('shape', triangle), 't')
 done()
+
